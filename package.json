@@ -1,0 +1,30 @@
+{
+  "name": "awesome-list-generator",
+  "version": "0.1.0",
+  "description": "placeHolder",
+  "main": "index.js",
+  "scripts": {
+    "init": "node initialize.js",
+    "start": "forever -p $APP_PATH -l $LOG/access.log -e $LOG/error.log -o $LOG/out.log -a --pidFile $PID start $APP",
+    "test": "forever -l forever.log -o access.log -e error.log -a start index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttionya/Awesome-List-Generator.git"
+  },
+  "keywords": [
+    "Github"
+  ],
+  "author": "ttionya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ttionya/Awesome-List-Generator/issues"
+  },
+  "homepage": "https://github.com/ttionya/Awesome-List-Generator",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "console-stamp": "^0.2.4",
+    "github": "^5.2.0",
+    "q": "^1.4.1"
+  }
+}
