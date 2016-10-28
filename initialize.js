@@ -41,6 +41,7 @@ if (!fs.existsSync(path.join(APP_PATH, 'config.js'))) {
 
 
 const initialize = require(path.join(LIBS_PATH, 'initialize.js'))           // ~/libs/initialize.js
+    , git = require(path.join(LIBS_PATH, 'git.js'))                         // ~/libs/git.js
     , githubFuncs = require(path.join(LIBS_PATH, 'github', 'functions.js')) // ~/libs/github/functions.js
     , config = require(path.join(APP_PATH, 'config.js'))                    // ~/config.js
 ;
@@ -211,19 +212,14 @@ checkRepo()
           fs.writeFileSync(path.join(REPO_PATH, 'data.json'), '{}');
         }
 
-        execSync('git -C ' + REPO_PATH + ' add .', { stdio: [2] });
-        try {
-            execSync('git -C ' + REPO_PATH + ' commit -m "' + config.name + ' initialize"', { stdio: [2] });
-        } catch (e) {}
-        execSync('git -C ' + REPO_PATH + ' push origin master -f', { stdio: [2] });
+        git.push(config.name + ' initialize');
       }
 
       // pull
       else {
         process.stdout.write(colors.blue(language[LANG].init_pull_info));
 
-        execSync('git -C ' + REPO_PATH + ' fetch', { stdio: [2] });
-        execSync('git -C ' + REPO_PATH + ' reset --hard origin/master', { stdio: [2] });
+        git.pull();
       }
 
       writeOK();
@@ -251,6 +247,16 @@ checkRepo()
 
         return require(path.join(LIBS_PATH, 'starred.js'))();
       }
+    })
+
+
+    /**
+     * 12. Finally
+     *
+     **/
+    .then(() => {
+      initialize.lineBreak();
+      console.info(colors.green(language[LANG].init_finish_all));
     })
     .done();
 
@@ -301,7 +307,7 @@ function checkPushOrPull() {
   // ask
   (function ask() {
     rl.question('> (pull or push) ', answer => {
-      if (!/pull|push/i.test(answer)) {
+      if (!/^pull$|^push$/i.test(answer)) {
         ask();
       }
       else {

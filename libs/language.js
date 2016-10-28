@@ -32,6 +32,7 @@ module.exports = {
     init_pull_info: 'Pull from the remote repository: ',
     init_finish_initialize_info: 'Initialization is complete !!',
     init_get_starred_info: 'We will import your starred repositories list. Please wait ...',
+    init_finish_all: 'All work has been completed. Please run `npm test` to test.',
 
     check_config_debug: 'Error: Please check config file (debug must be Boolean).',
     check_config_third_party_module_debug: 'Error: Please check config file (third_party_module_debug must be Boolean).',
@@ -52,7 +53,7 @@ module.exports = {
     info_get_starred_repos_retry: 'Failed to get starred repositories list, left %d retry times.',
     info_get_starred_repos_progress: 'Processing on page %d of %d data.',
     info_get_starred_repos_generate: 'Generating markdown files ...',
-    info_get_starred_repos_finish: '',
+    info_get_starred_repos_generate_ok: 'Generated success, used %d ms.',
 
     error_starred_get_data: 'We have some troubles with read data from data.json.',
     error_starred_write_data: 'We have some troubles with write data to data.json.',
@@ -84,6 +85,7 @@ module.exports = {
     init_pull_info: '从远程仓库拉取代码：',
     init_finish_initialize_info: '初始化完成！！',
     init_get_starred_info: '我们将为您导入已加星标的仓库列表，请稍后...',
+    init_finish_all: '所有工作均已完成，请执行 `npm test` 进行端口测试',
 
     check_config_debug: '错误：请确认 config 文件（debug 属性必须为布尔值）',
     check_config_third_party_module_debug: '错误：请确认 config 文件（third_party_module_debug 属性必须为布尔值）',
@@ -104,7 +106,7 @@ module.exports = {
     info_get_starred_repos_retry: '已加星标的仓库列表获取失败，剩余尝试次数 %d 次',
     info_get_starred_repos_progress: '正在处理第 %d 页的共 %d 条数据',
     info_get_starred_repos_generate: '正在生成 markdown 文件...',
-    info_get_starred_repos_finish: '',
+    info_get_starred_repos_generate_ok: '生成成功，共耗时 %d 毫秒',
 
     error_starred_get_data: '我们从 data.json 中读取数据时遇到了麻烦',
     error_starred_write_data: '我们在将数据写入 data.json 时遇到了麻烦',

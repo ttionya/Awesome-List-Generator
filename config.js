@@ -130,7 +130,7 @@ module.exports = {
      * You can reverse proxy this by Apache, Nginx etc.
      *
      **/
-    port: 8888,
+    port: 80,
 
     /**
      * Password

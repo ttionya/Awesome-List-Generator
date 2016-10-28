@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "init": "node initialize.js",
-    "start": "forever -p $APP_PATH -l $LOG/access.log -e $LOG/error.log -o $LOG/out.log -a --pidFile $PID start $APP",
-    "test": "forever -l forever.log -o access.log -e error.log -a start index.js"
+    "test": "node port-test.js",
+    "start": "forever -l forever.log -o logs.log -e logs.log -a start index.js"
   },
   "repository": {
     "type": "git",

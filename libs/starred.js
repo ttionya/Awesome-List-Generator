@@ -23,6 +23,8 @@ const path = require('path')
     , Q = require('q')
     , initialize = require(path.join(LIBS_PATH, 'initialize.js'))           // ~/libs/initialize.js
     , githubFuncs = require(path.join(LIBS_PATH, 'github', 'functions.js')) // ~/libs/github/functions.js
+    , generator = require(path.join(LIBS_PATH, 'generator.js'))             // ~/libs/generator.js
+    , git = require(path.join(LIBS_PATH, 'git.js'))                         // ~/libs/git.js
     , language = require(path.join(LIBS_PATH, 'language.js'))               // ~/libs/language.js
     , config = require(path.join(APP_PATH, 'config.js'))                    // ~/config.js
 ;
@@ -40,7 +42,7 @@ let dataObjects             // store objects
 function starred() {
 
   // read and format data from data.json
-  Q.nfcall(fs.readFile, path.join(REPO_PATH, 'data.json'))
+  return Q.nfcall(fs.readFile, path.join(REPO_PATH, 'data.json'))
       .then(result => dataObjects = JSON.parse(result))
       .fail(error => {
         console.error(colors.red(language[LANG].error_starred_get_data));
@@ -56,7 +58,7 @@ function starred() {
        * store starred repos in dataObjects
        *
        **/
-      .then(result => getStarredRepos())
+      .then(() => getStarredRepos())
       .then(() => Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'data.json'), JSON.stringify(dataObjects))) // success and write into data.json
       .fail(error => {
         console.error(colors.red(language[LANG].error_starred_write_data));
@@ -76,8 +78,20 @@ function starred() {
           initialize.lineBreak();
           return console.info(colors.blue(language[LANG].info_get_starred_repos_generate));
       })
-      .then()
+      .then(() => generator(dataObjects)) // only return success
+      .then(result => console.info(colors.green(language[LANG].info_get_starred_repos_generate_ok), result))
 
+
+      /**
+       * push to remote repository
+       *
+       **/
+      .then(() => git.push('import from starred'))
+      .fail(error => {
+          console.error(error);
+
+          process.exit();
+      })
   ; // no done()
 }
 

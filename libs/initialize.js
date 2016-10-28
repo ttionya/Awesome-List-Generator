@@ -54,7 +54,7 @@ function checkConfig() {
 
 
   /**
-   * empty
+   * root
    *
    **/
 
@@ -208,7 +208,6 @@ function checkConfig() {
   }
 
 
-
   return flag;
 }
 
@@ -220,11 +219,17 @@ let outputError = error => {
 };
 
 
+// trim for cCategories
+let cCategoriesTrim = cCategories => {
+  let cCategoriesArr;
 
-module.exports = (() => {
-  return {
-    lineBreak: lineBreak,
-    checkConfig: checkConfig,
-    outputError: outputError
-  }
-})();
+  cCategoriesArr = cCategories.split(',');
+  return cCategoriesArr.map(val => val.toString().trim()).join(', '); //TODO \s\s =>  \s
+};
+
+
+
+module.exports.lineBreak =lineBreak;
+module.exports.checkConfig = checkConfig;
+module.exports.outputError = outputError;
+module.exports.cCategoriesTrim = cCategoriesTrim;

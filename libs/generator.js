@@ -30,12 +30,15 @@ const poweredByName = config.name
 
 
 function generateFiles(data) {
-  // return Q.all([byTime(data), byName(data), byLanguage(data), byCategories(data)]);
+  let startTime = Date.now();
 
-  Q.all([byTime(data), byName(data), byLanguage(data)])
-      .then(result => console.info(result))
-      .fail(error => console.error(error))
-      .done()
+  return Q.all([byTime(data), byName(data), byLanguage(data), byCategories(data)])
+      .then(() => Date.now() - startTime)
+      .fail(error => {
+        console.error(error);
+
+        process.exit();
+      }); // no done()
 }
 
 
@@ -43,10 +46,8 @@ function generateFiles(data) {
 /**
  * Generate markdown file by time
  *
- * Generate default markdown file
- *
  */
-function byTime(data) { //TODO 还是放到名称排序
+function byTime(data) {
 
   // DEBUG
   DEBUG ? console.time('Generate by time') : 0;
@@ -56,7 +57,6 @@ function byTime(data) { //TODO 还是放到名称排序
       , dateYearArr = []     // an array for year ([1070, 2015, 2016, ...])
       , dateYearObj = {}     // an object for month ({ '1070': [1], '2015': [1, 5, 12], '2016': [1, 9, 10] })
       , finString
-      , finDefaultString
   ;
 
 
@@ -76,12 +76,12 @@ function byTime(data) { //TODO 还是放到名称排序
 
       dateYearArr.push(tmpDateYear);
       dateYearObj[tmpDateYear] = [];
+    }
 
-      if (!tmpTmpDateYearObj[tmpDateMonth]) {
-        tmpTmpDateYearObj[tmpDateMonth] = [];
+    if (!tmpTmpDateYearObj[tmpDateMonth]) {
+      tmpTmpDateYearObj[tmpDateMonth] = [];
 
-        dateYearObj[tmpDateYear].push(tmpDateMonth);
-      }
+      dateYearObj[tmpDateYear].push(tmpDateMonth);
     }
 
     /**
@@ -137,27 +137,21 @@ function byTime(data) { //TODO 还是放到名称排序
 
   /**
    * Convert to README.md
-   * Convert to README-DEFAULT.md
    *
    **/
-  finString = getHeader('Time');
-  finDefaultString = getHeader('Default');
+  finString = getHeader('Time') + getNav('Time', dateYearArr, dateYearObj);
 
   for (let year of dateYearArr) {
     for (let month of dateYearObj[year] /* Array */) {
       if (year != 1970) {
         finString += '## ' + year + '.' + month + '\n\n';
-        finDefaultString += '## ' + year + '.' + month + '\n\n';
       }
       else {
         finString += '## Before\n\n';
-        finDefaultString += '## Before\n\n';
       }
 
       for (let tmpItem of finObject[year][month] /* Array */) {
         finString += '- [**' + tmpItem.name + '**](https://github.com/' + tmpItem.owner + '/' + tmpItem.name + '): ' + getDescription(tmpItem) + getCategories(tmpItem) + '\n\n';
-
-        finDefaultString += '- [**' + tmpItem.name + '**](https://github.com/' + tmpItem.owner + '/' + tmpItem.name + '): ' + (tmpItem.description ? tmpItem.description : 'Empty') + '\n\n';
       }
     }
   }
@@ -167,7 +161,6 @@ function byTime(data) { //TODO 还是放到名称排序
    * Write file
    **/
   return Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'README.md'), finString)
-      .then(() => fs.writeFile(path.join(REPO_PATH, 'README-DEFAULT.md'), finDefaultString))
       .then(() => /* DEBUG */ DEBUG ? console.timeEnd('Generate by time') : 0)
       .fail(error => { throw error; }); // no done()
 }
@@ -176,6 +169,8 @@ function byTime(data) { //TODO 还是放到名称排序
 
 /**
  * Generate markdown file by name
+ *
+ * Generate default markdown file
  *
  */
 function byName(data) {
@@ -189,6 +184,7 @@ function byName(data) {
       , firstLetterSet = new Set()
       , firstLetterArr // Array.from(firstLetterSet)
       , finString
+      , finDefaultString
   ;
 
 
@@ -198,7 +194,7 @@ function byName(data) {
         , tmpFirstLetter = tmpItemNameArr[1].charAt(0).toUpperCase()    // (tmp)(String) first letter of name
     ;
 
-    tmpFirstLetter = /[A-Z]/.test(tmpFirstLetter) ? tmpFirstLetter : '#';
+    tmpFirstLetter = /[A-Z]/.test(tmpFirstLetter) ? tmpFirstLetter : '#'; // can not use anchor
 
     // initialize objects
     finObject[tmpFirstLetter] = finObject[tmpFirstLetter] || [];
@@ -241,9 +237,11 @@ function byName(data) {
 
   /**
    * Convert to README-NAME.md
+   * Convert to README-DEFAULT.md
    *
    **/
-  finString = getHeader('Name');
+  finString = getHeader('Name') + getNav('Name', firstLetterArr);
+  finDefaultString = getHeader('Default') + getNav('Default', firstLetterArr);
 
   for (let i = 0, tmpFirstLetter; i < 27 /*alphabet.length*/; i++) {
     tmpFirstLetter = alphabet.charAt(i); // get first letter (upper letter)
@@ -251,8 +249,12 @@ function byName(data) {
     if (finObject[tmpFirstLetter]) {
       finString += tmpFirstLetter === '#' ? '## \# \n\n' : '## ' + tmpFirstLetter + '\n\n';
 
+      finDefaultString += tmpFirstLetter === '#' ? '## \# \n\n' : '## ' + tmpFirstLetter + '\n\n';
+
       for (let tmpItem of finObject[tmpFirstLetter] /* Array */ ) {
         finString += '[**' + tmpItem.name + '**](https://github.com/' + tmpItem.owner + '/' + tmpItem.name + '): ' + getDescription(tmpItem) + getCategories(tmpItem) + '\n\n';
+
+        finDefaultString += '- [**' + tmpItem.name + '**](https://github.com/' + tmpItem.owner + '/' + tmpItem.name + '): ' + (tmpItem.description ? tmpItem.description : 'Empty') + '\n\n';
       }
     }
   }
@@ -262,7 +264,8 @@ function byName(data) {
    * Write file
    **/
   return Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'README-NAME.md'), finString)
-      .then(result => /* DEBUG */ DEBUG ? console.timeEnd('Generate by name') : 0)
+      .then(() => Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'README-DEFAULT.md'), finDefaultString))
+      .then(() => /* DEBUG */ DEBUG ? console.timeEnd('Generate by name') : 0)
       .fail(error => { throw error; }); // no done()
 }
 
@@ -337,7 +340,7 @@ function byLanguage(data) {
    * Convert to README-LANGUAGE.md
    *
    **/
-  finString = getHeader('Language');
+  finString = getHeader('Language') + getNav('Language', finObject['null'] ? langArray.concat('Other') : langArray);
 
   for (let lang of langArray) {
     finString += '## ' + lang + '\n\n';
@@ -361,7 +364,7 @@ function byLanguage(data) {
    * Write file
    **/
   return Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'README-LANGUAGE.md'), finString)
-      .then(result => /* DEBUG */ DEBUG ? console.timeEnd('Generate by language') : 0)
+      .then(() => /* DEBUG */ DEBUG ? console.timeEnd('Generate by language') : 0)
       .fail(error => { throw error; }); // no done()
 }
 
@@ -385,11 +388,9 @@ function byCategories(data) {
 
   for (let id in data) {
     let tmpItem = data[id]                            // (tmp)(Object) item from data
-        , tmpCatArr = tmpItem.cCategories.split(',')  // (tmp)(Array) tmpItem.categories array (['category1', 'category2', ...] or [])
+        , tmpCatArr = tmpItem.cCategories.split(', ') // (tmp)(Array) tmpItem.categories array (['category1', 'category2', ...] or [])
         , tmpItemNameArr = tmpItem.name.split('/')    // (tmp)(Array) tmpItem.name.split
     ;
-
-    tmpCatArr.length === 0 ? tmpCatArr.push('') : 0;
 
     for (let category of tmpCatArr) {
 
@@ -422,46 +423,46 @@ function byCategories(data) {
     }
   }
 
+
+  /**
+   * Sort
+   *
+   **/
+
   // sort finObject[]
   for (let category in finObject) {
-    finObject[category].sort((pre, aft) => {
-      if (pre.name.toLowerCase() < aft.name.toLowerCase()) {
-        return -1;
-      }
-      else if (pre.name.toLowerCase() === aft.name.toLowerCase()) {
-        return pre.owner.toLowerCase() <= aft.owner.toLowerCase() ? -1 : 1;
-      }
-      else {
-        return 1;
-      }
-    });
+    finObject[category].sort((pre, aft) => sortByName(pre, aft));
   }
 
   // sort categoriesArr
   categoriesArr.sort();
-  categoriesArr.splice(0, 1);
-  categoriesArr.push('');
+  if (categoriesArr[0] === '') {
+    categoriesArr.splice(0, 1);
+    categoriesArr.push('');
+  }
 
-  // convert to README-CATEGORY.md
-  finString = getHeader('Time');
+
+  /**
+   * Convert to README-CATEGORY.md
+   *
+   **/
+  finString = getHeader('Category') + getNav('Category', categoriesArr);
 
   for (let category of categoriesArr) {
-    finString += category !== '' ? '# ' + category + '\n\n' : '# Other\n\n';
-    // TODO encode
+    finString += category !== '' ? '## ' + category + '\n\n' : '## Other \n\n';
 
     for (let tmpItem of finObject[category] /* Array */) {
       finString += '[**' + tmpItem.name + '**](https://github.com/' + tmpItem.owner + '/' + tmpItem.name + '): ' + getDescription(tmpItem) + getCategories(tmpItem) + '\n\n';
     }
   }
 
-  // write file
-  fs.writeFileSync('./stars/README-CATEGORY.md', finString);
 
-  console.timeEnd('Categories');
-
-  def.resolve('');
-
-  return def.promise;
+  /**
+   * Write file
+   **/
+  return Q.nfcall(fs.writeFile, path.join(REPO_PATH, 'README-CATEGORY.md'), finString)
+      .then(() => /* DEBUG */ DEBUG ? console.timeEnd('Generate by categories') : 0)
+      .fail(error => { throw error; }); // no done()
 }
 
 
@@ -513,8 +514,63 @@ function getHeader(exclude) {
 
 
 // get nav
-function getNav(itemArray) {
+function getNav(keyword, itemArray, itemObject) {
+  let finString = '## Contents \n\n';
 
+  switch (keyword) {
+    case "Time":
+      for (let year of itemArray) {
+        if (year == 1970) {
+          finString += '- [Before](#before)';
+        }
+        else {
+          finString += '- ' + year + ': ';
+
+          for (let month of itemObject[year] /* Array */) {
+            finString += '[' + month + '](#' + year + month + ') ';
+          }
+        }
+
+        finString += '  \n';
+      }
+
+      break;
+
+    case "Name":
+    case "Default":
+
+      // remove #
+      if (itemArray[0] === '#') {
+        itemArray.splice(0, 1);
+      }
+
+      for (let name of itemArray) {
+        finString += '- [' + name + '](#' + name.toString().toLowerCase() + ') '
+      }
+
+      break;
+
+    case "Language":
+      for (let language of itemArray) {
+        finString += '- [' + language + '](#' + language.toString().toLowerCase().replace(/\s/g, '-') + ')  \n'
+      }
+
+      break;
+
+    case "Category":
+      for (let category of itemArray) {
+        if (category !== '') {
+          finString += '- [' + category + '](#' + category.toString().toLowerCase().replace(/\s/g, '-') + ')  \n'
+        }
+        else {
+          finString += '- [Other](#other)  \n'
+        }
+      }
+
+      break;
+  }
+
+  return finString + '\n\n<br>\n\n';
 }
 
 

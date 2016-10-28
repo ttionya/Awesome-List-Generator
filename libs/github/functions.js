@@ -80,9 +80,5 @@ function getStarredReposQ(page, perPage, retries) {
 
 
 
-module.exports = (() => {
-  return {
-    getReposQ: getReposQ,
-    getStarredReposQ: getStarredReposQ
-  }
-})();
+module.exports.getReposQ = getReposQ;
+module.exports.getStarredReposQ = getStarredReposQ;
