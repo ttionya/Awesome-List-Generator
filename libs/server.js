@@ -23,7 +23,7 @@ const path = require('path')
     , Q = require('q')
     , handler = require(path.join(LIBS_PATH, 'handler.js')) // ~/libs/handler.js
     , config = require(path.join(APP_PATH, 'config.js'))    // ~/config.js
-;
+    ;
 
 
 
@@ -42,25 +42,57 @@ function route(request, response) {
  *
  **/
 function handle(postBody) {
+  let def = Q.defer();
+
   switch (postBody.action) {
-      case "add":
-        return handler.add(postBody);
 
-        break;
+    // get description and all categories by repo
+    case "info":
+      handler.info(postBody)
+          .then(result => def.resolve(result))
+          .fail(error => def.reject(error))
+          .done();
 
-      case "change":
-        return handler.change(postBody);
+      break;
 
-        break;
+    case "add":
+      handler.add(postBody)
+          .then(result => def.resolve(result))
+          .fail(error => def.reject(error))
+          .done();
 
-      case "delete":
-        return handler._delete(postBody);
+      break;
 
-        break;
+    case "update":
+      handler.update(postBody)
+          .then(result => def.resolve(result))
+          .fail(error => def.reject(error))
+          .done();
 
-      default:
-        throw '404';
+      break;
+
+    case "delete":
+      handler.del(postBody)
+          .then(result => def.resolve(result))
+          .fail(error => def.reject(error))
+          .done();
+
+      break;
+
+    // check server is ready
+    case "conform":
+      def.resolve('Validation was successful.');
+
+      break;
+
+    default:
+      def.reject({
+        code: '404',
+        message: 'Not found matching action.'
+      });
   }
+
+  return def.promise;
 }
 
 
@@ -83,15 +115,9 @@ function checkPassword(password) {
  * 
  **/
 function onRequest(request, response) {
-  let method = request.method;
 
-  // GET method
-  if (method === 'GET') {
-
-  }
-
-  // POST method
-  else if (method === 'POST') {
+  // Only support POST method
+  if (request.method === 'POST') {
     let postBody = '';
 
     request.on('data', chunk => postBody += chunk);
@@ -102,14 +128,15 @@ function onRequest(request, response) {
       // authenticate
       if (checkPassword(postBody.hash)) {
 
-        Q.nfcall(handle, postBody)
-            .then(() => {
-                console.log('ok')
+        handle(postBody)
+            .then(result => {
               response.statusCode = 200;
+              response.write(result);
               response.end();
             })
             .fail(error => {
-              response.statusCode = error;
+              response.statusCode = error.code;
+              response.write(error.message);
               response.end();
             })
             .done();

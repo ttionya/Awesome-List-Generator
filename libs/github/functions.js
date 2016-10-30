@@ -37,8 +37,8 @@ function getReposQ(owner, repo, retries, first = false){
         // DEBUG
         DEBUG ? console.log(error) : 0;
 
-        if (error.code === 404) {
-          throw error; // 404 Not Found
+        if (error.code === 404 || error.code === 401) {
+          throw error; // 404 Not Found / 401 Unauthorized
         }
         else if (retries) {
           console.warn((first && ENV === 'initialize' ? '\n' : '') + colors.yellow(language[LANG].info_get_repos_retry), retries);

@@ -1,19 +1,22 @@
 {
   "name": "awesome-list-generator",
   "version": "0.1.0",
-  "description": "placeHolder",
+  "description": "An awesome list generator for your starred, but not only for starred.",
   "main": "index.js",
   "scripts": {
     "init": "node initialize.js",
     "test": "node port-test.js",
-    "start": "forever -l forever.log -o logs.log -e logs.log -a start index.js"
+    "start": "forever -l forever.log -o logs.log -e logs.log -a start index.js",
+    "stop": "forever stop index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ttionya/Awesome-List-Generator.git"
   },
   "keywords": [
-    "Github"
+    "Github",
+    "AwesomeList",
+    "starred"
   ],
   "author": "ttionya",
   "license": "MIT",
