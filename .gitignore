@@ -41,3 +41,6 @@ AwesomeList
 
 # Develop Personal Setting
 config.js
+
+# Ignore folder created by command
+dist

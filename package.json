@@ -1,9 +1,10 @@
 {
   "name": "awesome-list-generator",
-  "version": "0.5.1",
+  "version": "1.0.0 beta",
   "description": "An awesome list generator for your starred, but not only for starred.",
   "main": "index.js",
   "scripts": {
+    "build": "babel libs -d ./dist/libs && babel index.js -o ./dist/index.js && babel config.js -o ./dist/config.js",
     "init": "node initialize.js",
     "test": "node port-test.js",
     "start": "forever -l forever.log -o logs.log -e logs.log -a start index.js",
@@ -25,6 +26,10 @@
   },
   "homepage": "https://github.com/ttionya/Awesome-List-Generator",
   "dependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.2.0",
+    "chalk": "^1.1.0",
     "colors": "^1.1.2",
     "console-stamp": "^0.2.4",
     "github": "^5.2.0",
