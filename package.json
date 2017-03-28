@@ -1,6 +1,6 @@
 {
   "name": "awesome-list-generator",
-  "version": "1.0.0 beta",
+  "version": "1.0.0-beta",
   "description": "An awesome list generator for your starred, but not only for starred.",
   "main": "index.js",
   "scripts": {
