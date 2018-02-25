@@ -1,159 +1,156 @@
 module.exports = {
 
-////////////////////////////////////////////
-//                  Setting               //
-////////////////////////////////////////////
+    ////////////////////////////////////////////
+    //                  Setting               //
+    ////////////////////////////////////////////
 
-  /**
-   * Tool debug
-   *
-   **/
-  debug: false,
+    github: {
 
-  /**
-   * Third party module debug
-   *
-   **/
-  third_party_module_debug: false,
+        /**
+         * Your Github username
+         *
+         * You can find your username by click the avatar.
+         *
+         **/
+        username: '',
 
-  github: {
+        /**
+         * Your Github email
+         *
+         * Email will used in `git config user.email email`.
+         *
+         **/
+        email: '',
 
-    /**
-     * Your Github username
-     *
-     * You can find your username by click the avatar.
-     *
-     **/
-    username: '',
+        /**
+         * Your Personal access tokens
+         *
+         * Go to https://github.com/settings/tokens to generate a new access token for this tool.
+         *
+         * Note: You must selected repo -> public_repo.
+         *
+         **/
+        access_token: '',
 
-    /**
-     * Your Github email
-     *
-     * Email will used in `git config user.email email`.
-     *
-     **/
-    email: '',
+        /**
+         * Awesome list repository
+         *
+         * Be sure this repository is exist on Github.
+         *
+         * Example: 'stars'
+         *
+         **/
+        repo: ''
+    },
 
-    /**
-     * Your Personal access tokens
-     *
-     * Turn to https://github.com/settings/tokens to generate a new access token for this tool.
-     *
-     * Note: You must choose repo -> public_repo.
-     *
-     **/
-    access_token: '',
+    local: {
 
-    /**
-     * Push to which repository
-     *
-     * Be sure this repository is exist on Github.
-     *
-     * Example: 'stars'
-     *
-     **/
-    repo: ''
-  },
+        /**
+         * Awesome list path
+         *
+         * Relative to the root directory of the tool.
+         *
+         * Default: 'AwesomeList'
+         *
+         * You should use '\' on Windows, and use '/' on Linux and MAC.
+         *
+         **/
+        path: 'AwesomeList',
+    },
 
-  local: {
+    generator: {
 
-    /**
-     * Awesome list path
-     *
-     * Relative to the root directory of the tool.
-     *
-     * Default: 'AwesomeList'
-     *
-     * You should use '\' on Windows, and use '/' on Linux/MAC.
-     *
-     **/
-    path: 'AwesomeList',
+        /**
+         * Get your star list.
+         *
+         * Default: false
+         *
+         * Only run once when you initialize this tool.
+         *
+         **/
+        history_stars: false,
 
-    /**
-     * Language
-     *
-     * English or 中文
-     *
-     * Support: en | zh
-     *
-     **/
-    language: "en"
-  },
+        /**
+         * Set description
+         *
+         * Markdown file will display which description.
+         *
+         * Option: all | default | custom
+         *
+         *           all: repo's default description and custom description
+         *       default: repo's default description
+         * (best) custom: custom description
+         *
+         * Note: We will display repo's default description(custom description) if custom description(repo's default description) is empty.
+         *
+         **/
+        description: "custom",
 
-  generator: {
+        /**
+         * Set categories
+         *
+         * Default: false
+         *
+         * Markdown file display the categories or not.
+         *
+         **/
+        categories: false,
+    },
 
-    /**
-     * Get your star list.
-     *
-     * Default: false
-     *
-     * Only run once when you initialize this tool.
-     *
-     **/
-    history_stars: false,
+    server: {
 
-    /**
-     * Set description
-     *
-     * Markdown file will display which description.
-     *
-     * Option: all | default | custom
-     *
-     *           all: repo's default description and custom description
-     *       default: repo's default description
-     * (best) custom: custom description
-     *
-     * Note: We will display repo's default description(custom description) if custom description(repo's default description) is empty.
-     *
-     **/
-    description: "custom",
+        /**
+         * Port
+         *
+         * You must run as root when port < 1024
+         *
+         * You can reverse proxy this by Apache, Nginx etc.
+         *
+         **/
+        port: 8888,
 
-    /**
-     * Set categories
-     *
-     * Default: false
-     *
-     * Markdown file display the categories or not.
-     *
-     **/
-    categories: false,
-  },
+        /**
+         * Password
+         *
+         * This is the server,
+         * you need a password as credentials.
+         *
+         * Strong password:
+         *                  1. at least 8 characters long
+         *                  2. combines letters, numbers, and symbol characters within the password
+         *
+         * Regex is /^(?=.*\d)(?=.*[A-Za-z])(?=.*[-_=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>])[\w-=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>]{8,}$/
+         *
+         **/
+        password: ''
+    },
 
-  server: {
+    // log4js
+    log4js: {
 
-    /**
-     * Port
-     *
-     * You must run as root when port < 1024
-     *
-     * You can reverse proxy this by Apache, Nginx etc.
-     *
-     **/
-    port: 8888,
+        /**
+         * Log level
+         *
+         * Option: OFF | FATAL | ERROR | WARN | INFO | DEBUG | TRACE | ALL
+         *
+         */
+        logLevel: 'INFO',
 
-    /**
-     * Password
-     *
-     * This is the server,
-     * you need a password as credentials.
-     *
-     * Strong password:
-     *                  1. at least 8 characters long
-     *                  2. combines letters, numbers, and symbol characters within the password
-     *
-     * Regex is /^(?=.*\d)(?=.*[A-Za-z])(?=.*[-_=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>])[\w-=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>]{8,}$/
-     *
-     **/
-    password: ''
-  },
+        /**
+         * Log file
+         *
+         * Save the log information to file if not empty.
+         */
+        logFile: ''
+    },
 
 
-  ////////////////////////////////////////////
-  //       That's all, stop editing!        //
-  ////////////////////////////////////////////
+    ////////////////////////////////////////////
+    //       That's all, stop editing!        //
+    ////////////////////////////////////////////
 
-  // retry times
-  retries: 3,
+    // retry times
+    retries: 3,
 
-  name: 'Awesome List Generate'
+    name: 'Awesome List Generator'
 };
