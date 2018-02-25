@@ -36,11 +36,15 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# Production directories
-AwesomeList
+# IDE
+.idea
+.vscode
 
-# Develop Personal Setting
+# Build directory
+dist
+
+# Setting file
 config.js
 
-# Ignore folder created by command
-dist
+# Production directory
+AwesomeList
