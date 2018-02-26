@@ -21,37 +21,38 @@ github.authenticate({
  * @param owner
  * @param repo
  * @param retries
- * @returns {Promise<T>}
+ * @returns {Promise<*>}
  */
-let getRepos = (owner, repo, retries = config.retries) => {
+let getRepos = async (owner, repo, retries = config.retries) => {
     const log = log4js.getLogger(`${owner}/${repo}`); // log4js
 
     // Log
     log.info(`Request information of repository ${chalk.bold(owner + '/' + repo)}.`);
 
-    return github.repos.get({
-        owner,
-        repo,
-    })
-        .then(result => result)
-        .catch(error => {
-            // Log
-            log.error(`Error Code: ${chalk.red(error.code)}, Error Message: ${chalk.red(error.status)}`);
-            log.debug(error);
-
-            if (error.code === 404 || error.code === 401) {
-                throw error; // 404 Not Found / 401 Unauthorized
-            }
-            else if (retries) {
-                // Log
-                log.warn(`Failed to get repository information, left ${chalk.yellow(retries)} retry times.`);
-
-                return getRepos(owner, repo, retries - 1);
-            }
-            else {
-                throw error;
-            }
+    try {
+        return await github.repos.get({
+            owner,
+            repo,
         });
+    }
+    catch (error) {
+        // Log
+        log.error(`Error Code: ${chalk.red(error.code)}, Error Message: ${chalk.red(error.status)}`);
+        log.debug(error);
+
+        if (error.code === 404 || error.code === 401) {
+            throw error; // 404 Not Found / 401 Unauthorized
+        }
+        else if (retries) {
+            // Log
+            log.warn(`Failed to get repository information, left ${chalk.yellow(retries)} retry times.`);
+
+            return await getRepos(owner, repo, retries - 1);
+        }
+        else {
+            throw error;
+        }
+    }
 };
 
 /**
@@ -60,34 +61,35 @@ let getRepos = (owner, repo, retries = config.retries) => {
  * @param page
  * @param perPage
  * @param retries
- * @returns {Promise<T>}
+ * @returns {Promise<*>}
  */
-let getStarredRepos = (page, perPage, retries = config.retries) => {
+let getStarredRepos = async (page, perPage, retries = config.retries) => {
     const log = log4js.getLogger(`Starred repositories`); // log4js
 
     // Log
     log.info(`Request starred repositories. ${chalk.blue(`(Page ${page}, PerPage ${perPage})`)}`);
 
-    return github.activity.getStarredRepos({
-        page,
-        per_page: perPage,
-    })
-        .then(result => result)
-        .catch(error => {
-            // Log
-            log.error(`Error Code: ${chalk.red(error.code)}, Error Message: ${chalk.red(error.status)}`);
-            log.debug(error);
-
-            if (retries) {
-                // Log
-                log.warn(`Failed to get starred repositories list, left ${chalk.yellow(retries)} retry times.`);
-
-                return getStarredRepos(page, perPage, retries - 1);
-            }
-            else {
-                throw error;
-            }
+    try {
+        return await github.activity.getStarredRepos({
+            page,
+            per_page: perPage,
         });
+    }
+    catch (error) {
+        // Log
+        log.error(`Error Code: ${chalk.red(error.code)}, Error Message: ${chalk.red(error.status)}`);
+        log.debug(error);
+
+        if (retries) {
+            // Log
+            log.warn(`Failed to get starred repositories list, left ${chalk.yellow(retries)} retry times.`);
+
+            return await getStarredRepos(page, perPage, retries - 1);
+        }
+        else {
+            throw error;
+        }
+    }
 };
 
 
