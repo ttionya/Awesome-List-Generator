@@ -1,9 +1,13 @@
 {
   "name": "awesome-list-generator",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-alpha0",
   "description": "An awesome list generator for your starred, but not only for starred.",
+  "bin": {
+      "awesome": "bin/awesome.js"
+  },
   "main": "index.js",
   "scripts": {
+    "awesome": "node ./bin/awesome.js",
     "build": "babel libs -d ./dist/libs && babel index.js -o ./dist/index.js && babel config.js -o ./dist/config.js",
     "init": "node initialize.js",
     "test": "node port-test.js",
@@ -30,7 +34,9 @@
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
+    "bluebird": "^3.5.0",
     "chalk": "^2.3.0",
+    "commander": "^2.14.0",
     "cross-env": "^5.1.0",
     "log4js": "^2.5.3",
     "nodegit": "^0.20.3"
