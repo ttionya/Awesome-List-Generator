@@ -48,7 +48,7 @@ module.exports = {
         /**
          * Awesome list path
          *
-         * Relative to the root directory of the tool.
+         * Relative or absolute path.
          *
          * Default: 'AwesomeList'
          *

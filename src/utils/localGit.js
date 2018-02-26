@@ -4,26 +4,30 @@ const chalk = require('chalk');
 const config = require(path.join(process.env.APP_PATH, 'config.js'));
 const log4js = require('./log4js');
 
+const localPath = config.local.path;
+const repoPath = path.isAbsolute(localPath) ? localPath : path.join(process.env.APP_PATH, localPath);
+
 
 /**
  * Git clone.
  *
- * @returns {Promise<T>}
+ * @returns {Promise<*>}
  */
-let gitClone = () => {
+let gitClone = async () => {
     const log = log4js.getLogger(`Git Clone`); // log4js
 
-    const repoName = `${config.github.username}/${config.github.repo}`;
-    const repoPath = path.join(process.env.APP_PATH, config.local.path);
+    let repoName = `${config.github.username}/${config.github.repo}`;
 
     // Log
     log.info(`Git: Clone ${chalk.bold(repoName)} into ${chalk.blue(repoPath)}`);
 
-    return nodegit.Clone(`https://github.com/${repoName}`, repoPath, {
-        callbacks: {
-            certificateCheck: () => 1,
-            credentials: () => nodegit.Cred.userpassPlaintextNew(config.github.access_token, 'x-oauth-basic'),
-        }
+    return await nodegit.Clone(`https://github.com/${repoName}`, repoPath, {
+        fetchOpts: {
+            callbacks: {
+                certificateCheck: () => 1,
+                credentials: () => nodegit.Cred.userpassPlaintextNew(config.github.access_token, 'x-oauth-basic'),
+            },
+        },
     });
 };
 
