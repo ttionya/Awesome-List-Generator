@@ -1,11 +1,9 @@
-#!/usr/bin/env node
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
-const program = require('commander');
 const bluebird = require('bluebird');
 const chalk = require('chalk');
-const packageConfig = require('../package');
 
 
 process.env.APP_PATH = __dirname;
@@ -16,19 +14,17 @@ fsAccess(path.join(process.env.APP_PATH, 'dist/index.js'))
     .catch(() => {
         console.log(chalk.red(`Please run ${chalk.yellow(`【npm run build】`)} first.`));
 
-        // process.exit(0);
+        process.exit(0);
     })
 
     // Success
     .then(() => {
-        program
-            .version(packageConfig.version)
-            .command('<command>')
-            .description('npm run awesome -- command')
+        let argv = process.argv;
 
+        argv.length < 3 && process.exit(0);
 
-            .action(function (command) {
-                console.log(command)
-            })
-            .parse(process.argv);
+        switch (process.argv[2]) {
+            case 'init':
+                const init = require(path.join(process.env.APP_PATH, 'dist/initialize.js'));
+        }
     });
