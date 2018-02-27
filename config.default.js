@@ -12,7 +12,7 @@ module.exports = {
          * You can find your username by click the avatar.
          *
          **/
-        username: '',
+        username: '{{username}}',
 
         /**
          * Your Github email
@@ -20,7 +20,7 @@ module.exports = {
          * Email will used in `git config user.email email`.
          *
          **/
-        email: '',
+        email: '{{email}}',
 
         /**
          * Your Personal access tokens
@@ -30,7 +30,7 @@ module.exports = {
          * Note: You must selected repo -> public_repo.
          *
          **/
-        access_token: '',
+        access_token: '{{token}}',
 
         /**
          * Awesome list repository
@@ -40,7 +40,7 @@ module.exports = {
          * Example: 'stars'
          *
          **/
-        repo: ''
+        repo: '{{repo}}'
     },
 
     local: {
@@ -55,20 +55,10 @@ module.exports = {
          * You should use '\' on Windows, and use '/' on Linux and MAC.
          *
          **/
-        path: 'AwesomeList',
+        path: '{{localPath}}',
     },
 
     generator: {
-
-        /**
-         * Get your star list.
-         *
-         * Default: false
-         *
-         * Only run once when you initialize this tool.
-         *
-         **/
-        history_stars: false,
 
         /**
          * Set description
@@ -77,14 +67,14 @@ module.exports = {
          *
          * Option: all | default | custom
          *
-         *           all: repo's default description and custom description
-         *       default: repo's default description
-         * (best) custom: custom description
+         *           all: Display both repository's description and custom description
+         *       default: Display repository's description only
+         * (best) custom: Display custom description only
          *
          * Note: We will display repo's default description(custom description) if custom description(repo's default description) is empty.
          *
          **/
-        description: "custom",
+        description: "{{description}}",
 
         /**
          * Set categories
@@ -94,7 +84,7 @@ module.exports = {
          * Markdown file display the categories or not.
          *
          **/
-        categories: false,
+        categories: "{{categories}}",
     },
 
     server: {
