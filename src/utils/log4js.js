@@ -1,6 +1,5 @@
-const path = require('path');
 const log4js = require('log4js');
-const config = require(path.join(process.env.APP_PATH, 'config.js'));
+const config = require('./configFile').getConfig;
 
 
 module.exports = (() => {

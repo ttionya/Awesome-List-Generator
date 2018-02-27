@@ -1,7 +1,7 @@
 const path = require('path');
 const nodegit = require('nodegit');
 const chalk = require('chalk');
-const config = require(path.join(process.env.APP_PATH, 'config.js'));
+const config = require('./configFile').getConfig;
 const log4js = require('./log4js');
 
 const localPath = config.local.path;
