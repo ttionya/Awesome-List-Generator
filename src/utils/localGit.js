@@ -2,7 +2,7 @@ const path = require('path');
 const nodegit = require('nodegit');
 const chalk = require('chalk');
 const config = require('./configFile').getConfig;
-const log4js = require('./log4js');
+const { log4js, forceDebug } = require('./log4js');
 
 const localPath = config.local.path;
 const repoPath = path.isAbsolute(localPath) ? localPath : path.join(process.env.APP_PATH, localPath);
@@ -19,7 +19,7 @@ let gitClone = async () => {
     let repoName = `${config.github.username}/${config.github.repo}`;
 
     // Log
-    log.info(`Git: Clone ${chalk.bold(repoName)} into ${chalk.blue(repoPath)}`);
+    log[forceDebug('info')](`Git: Clone ${chalk.bold(repoName)} into ${chalk.blue(repoPath)}`);
 
     return await nodegit.Clone(`https://github.com/${repoName}`, repoPath, {
         fetchOpts: {

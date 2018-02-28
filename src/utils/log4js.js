@@ -2,7 +2,7 @@ const log4js = require('log4js');
 const config = require('./configFile').getConfig;
 
 
-module.exports = (() => {
+let _log4js = (() => {
     'use strict';
 
     let logConfig = {
@@ -36,3 +36,11 @@ module.exports = (() => {
 
     return log4js;
 })();
+
+let forceDebug = level => process.env.LOG_DEBUG ? 'debug' : level;
+
+
+module.exports = {
+    log4js: _log4js,
+    forceDebug,
+};
