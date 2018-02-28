@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const promiseTools = require('../utils/promisify');
@@ -9,30 +8,9 @@ const configInfo = require('../utils/configFile');
 const config = configInfo.getConfig;
 
 
-module.exports = async () => {
-    console.log(chalk.yellow(`Thank you for using ${config.name}.\n`));
-
+let setConfig = async () => {
     /**
-     * 1. Check config.js is exist.
-     *
-     */
-    if (configInfo.isConfigExist) {
-        let answer = await inquirer.prompt([{
-            type: 'confirm',
-            name: 'reinitialize',
-            message: chalk.blue(`Already initialized, reinitialize ? ${chalk.yellow('(will delete /config.js)')}`),
-            default: false,
-        }]);
-
-        if (!answer.reinitialize) {
-            console.log(chalk.yellow('\nExit'));
-
-            process.exit(0);
-        }
-    }
-
-    /**
-     * 2. Set GitHub settings.
+     * Set GitHub settings.
      *
      */
     console.log(chalk.bold.yellow('Github:'));
@@ -91,7 +69,7 @@ module.exports = async () => {
     let githubAnswer = await inquirer.prompt(githubQuestions);
 
     /**
-     * 3. Set local settings.
+     * Set local settings.
      *
      */
     console.log(chalk.bold.yellow('Local:'));
@@ -113,7 +91,7 @@ module.exports = async () => {
     }]);
 
     /**
-     * 4. Set generator settings.
+     * Set generator settings.
      *
      */
     console.log(chalk.bold.yellow('Generator:'));
@@ -148,7 +126,7 @@ module.exports = async () => {
     let generatorAnswer = await inquirer.prompt(generatorQuestions);
 
     /**
-     * 5. Set server settings.
+     * Set server settings.
      *
      */
     console.log(chalk.bold.yellow('Server:'));
@@ -169,13 +147,66 @@ module.exports = async () => {
     }]);
 
     /**
-     * 6. Write to config.js
+     * Write to config.js
      *
      */
     console.log(chalk.blue('\nWrite to config.js ...'));
 
     let obj = {};
     Object.assign(obj, githubAnswer, localAnswer, generatorAnswer, serverAnswer);
-    
-    console.log(obj);
+
+    let defaultConfigCtn = await configInfo.getDefaultConfigCtnP();
+    Object
+        .entries(obj)
+        .forEach((val) => defaultConfigCtn = defaultConfigCtn.replace(`{{${val[0]}}}`, val[1]));
+
+    await configInfo.saveConfigCtnP(defaultConfigCtn);
+};
+
+
+module.exports = async () => {
+    console.log(chalk.bold.yellow(`Thank you for using ${config.name}.\n`));
+
+    /**
+     * Check config.js is exist.
+     *
+     */
+    if (configInfo.isConfigExist) {
+        let answer = await inquirer.prompt([{
+            type: 'list',
+            name: 'reinitialize',
+            message: chalk.blue('Already initialized, reinitialize ?'),
+            choices: [{
+                name: 'Delete config.js file and reinitialize.',
+                value: 0,
+            }, {
+                name: 'Skip config.js setting and do next step.',
+                value: 1,
+            }, {
+                name: 'Exit',
+                value: 2,
+            }]
+        }]);
+
+        switch (answer.reinitialize) {
+            case 0:
+                await promiseTools.fsUnlink(path.join(process.env.APP_PATH, 'config.js'));
+                await setConfig();
+
+                break;
+            case 1:
+
+                break;
+            case 2:
+                console.log(chalk.yellow('\nExit'));
+                process.exit(0);
+
+                break;
+        }
+    }
+    else {
+        await setConfig();
+    }
+
+
 };

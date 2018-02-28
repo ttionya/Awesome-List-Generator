@@ -12,7 +12,16 @@ const bluebird = require('bluebird');
 
 let fsAccess = bluebird.promisify(fs.access);
 
+let fsUnlink = bluebird.promisify(fs.unlink);
+
+let fsReadFile = bluebird.promisify(fs.readFile);
+
+let fsWriteFile = bluebird.promisify(fs.writeFile);
+
 
 module.exports = {
     fsAccess,
+    fsUnlink,
+    fsReadFile,
+    fsWriteFile,
 };

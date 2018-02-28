@@ -40,7 +40,7 @@ module.exports = {
          * Example: 'stars'
          *
          **/
-        repo: '{{repo}}'
+        repo: '{{repo}}',
     },
 
     local: {
@@ -112,7 +112,7 @@ module.exports = {
          * Regex is /^(?=.*\d)(?=.*[A-Za-z])(?=.*[-_=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>])[\w-=+!@#$%^&*()[\]\{}\\\/|?`~;:'",.<>]{8,}$/
          *
          **/
-        password: ''
+        password: '',
     },
 
     // log4js
@@ -131,7 +131,7 @@ module.exports = {
          *
          * Save the log information to file if not empty.
          */
-        logFile: ''
+        logFile: '',
     },
 
 
@@ -142,5 +142,5 @@ module.exports = {
     // retry times
     retries: 3,
 
-    name: 'Awesome List Generator'
+    name: 'Awesome List Generator',
 };
